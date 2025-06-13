@@ -16,28 +16,28 @@ input.onLogoEvent(TouchButtonEvent.Pressed, function () {
 })
 //Funkce směru jízdy
 function dopredu() {
-    mecanumRobot.Motor(LR.Upper_left, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Upper_right, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Lower_left, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Lower_right, MD.Back, 75)
+    mecanumRobot.Motor(LR.Upper_left, MD.Back, 45)
+    mecanumRobot.Motor(LR.Upper_right, MD.Forward, 55)
+    mecanumRobot.Motor(LR.Lower_left, MD.Forward, 45)
+    mecanumRobot.Motor(LR.Lower_right, MD.Back, 55)
 }
 function doleva() {
-    mecanumRobot.Motor(LR.Upper_left, MD.Back, 75)
-    mecanumRobot.Motor(LR.Upper_right, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Lower_left, MD.Back, 75)
-    mecanumRobot.Motor(LR.Lower_right, MD.Back, 75)
+    mecanumRobot.Motor(LR.Upper_left, MD.Forward, 45)
+    mecanumRobot.Motor(LR.Upper_right, MD.Forward, 55)
+    mecanumRobot.Motor(LR.Lower_left, MD.Back, 45)
+    mecanumRobot.Motor(LR.Lower_right, MD.Back, 55)
 }
 function doprava() {
-    mecanumRobot.Motor(LR.Upper_left, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Upper_right, MD.Back, 75)
-    mecanumRobot.Motor(LR.Lower_left, MD.Forward, 75)
-    mecanumRobot.Motor(LR.Lower_right, MD.Forward, 75)
+    mecanumRobot.Motor(LR.Upper_left, MD.Back, 45)
+    mecanumRobot.Motor(LR.Upper_right, MD.Back, 55)
+    mecanumRobot.Motor(LR.Lower_left, MD.Forward, 45)
+    mecanumRobot.Motor(LR.Lower_right, MD.Forward, 55)
 }
 function dozadu() {
-    mecanumRobot.Motor(LR.Upper_left, MD.Back, 75)
-    mecanumRobot.Motor(LR.Upper_right, MD.Back, 75)
-    mecanumRobot.Motor(LR.Lower_left, MD.Back, 75)
-    mecanumRobot.Motor(LR.Lower_right, MD.Forward, 75)
+    mecanumRobot.Motor(LR.Upper_left, MD.Forward, 45)
+    mecanumRobot.Motor(LR.Upper_right, MD.Back, 55)
+    mecanumRobot.Motor(LR.Lower_left, MD.Back, 45)
+    mecanumRobot.Motor(LR.Lower_right, MD.Forward, 55)
 }
 //funkce samotného ježdění
 function samojezditko() {
@@ -108,42 +108,41 @@ function linka() {
     basic.pause (1000)
 
     basic.forever(function() {
-
+        let linetrack = 0
         if (mecanumRobot.LineTracking(LT.Left) == 0 && mecanumRobot.LineTracking(LT.Right) == 1) {
             doprava ()
         }
-        if (mecanumRobot.LineTracking(LT.Left) == 1 && mecanumRobot.LineTracking(LT.Right) == 0) {
+        else if (mecanumRobot.LineTracking(LT.Left) == 1 && mecanumRobot.LineTracking(LT.Right) == 0) {
             doleva ()
         }
-        if (mecanumRobot.LineTracking(LT.Left) == 0 && mecanumRobot.LineTracking(LT.Right) == 0) {
-            mecanumRobot.state(MotorState.stop)
+        else if (mecanumRobot.LineTracking(LT.Left) == 1 && mecanumRobot.LineTracking(LT.Right) == 1) {
+            dopredu()
         }
         else {
-            dopredu()
+            mecanumRobot.state(MotorState.stop)
         }
     }) 
 }
 //funkce spojení vozidla s mobilovou aplikací a následné řízení 
 function ovladac() {
-
-    let connect = 0
-    let rec_data = ""
-    serial.redirectToUSB()
+    let buttons = 0
+    let pripojeni:boolean = false
 
     basic.showString ("mode4")
     basic.pause (1000)
-
+    bluetooth.startUartService()
+    
     bluetooth.onBluetoothConnected(function() {
         basic.showString ("connected")
-        connect = 1
-        while (connect == 1) {
-            rec_data = (bluetooth.uartReadUntil(serial.delimiters(Delimiters.Hash))
-            serial.writeString(rec_data)
-            serial.writeLine("") 
+        pripojeni = true
+        while (pripojeni = true) {
+
         }
     })
-
+    
     bluetooth.onBluetoothDisconnected(function() {
         basic.showString ("disconnected")
+        pripojeni = false
     })
+
 }
